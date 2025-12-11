@@ -1,5 +1,6 @@
-package ie.atu.paymentservice;
+package ie.atu.paymentservice.repository;
 
+import ie.atu.paymentservice.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

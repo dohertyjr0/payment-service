@@ -1,5 +1,6 @@
 package ie.atu.paymentservice;
 
+import ie.atu.paymentservice.repository.PaymentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
