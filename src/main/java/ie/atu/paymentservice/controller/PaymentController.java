@@ -1,5 +1,7 @@
-package ie.atu.paymentservice;
+package ie.atu.paymentservice.controller;
 
+import ie.atu.paymentservice.Payment;
+import ie.atu.paymentservice.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
