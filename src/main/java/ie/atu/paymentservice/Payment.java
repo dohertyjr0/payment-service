@@ -23,10 +23,10 @@ public class Payment {
     private double amount;
 
     @NotBlank(message = "Sender cannot be blank")
-    private String sender;
+    private String sender;      // ← This stores the sender's ACCOUNT NAME
 
     @NotBlank(message = "Receiver cannot be blank")
-    private String receiver;
+    private String receiver;    // ← This stores the receiver's ACCOUNT NAME
 
     public Payment(double amount, String sender, String receiver) {
         this.amount = amount;
