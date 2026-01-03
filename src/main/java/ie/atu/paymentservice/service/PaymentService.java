@@ -1,6 +1,7 @@
 package ie.atu.paymentservice.service;
 
 import ie.atu.paymentservice.Payment;
+import ie.atu.paymentservice.client.AccountDTO;
 import ie.atu.paymentservice.client.AccountServiceClient;
 import ie.atu.paymentservice.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,36 @@ public class PaymentService {
     }
 
     public Payment create(Payment payment) {
-        Boolean senderExists = accountServiceClient.checkAccountExists(payment.getSender());
-        Boolean receiverExists = accountServiceClient.checkAccountExists(payment.getReceiver());
+        List<AccountDTO> allAccounts = accountServiceClient.getAllAccounts();
 
-        if (Boolean.FALSE.equals(senderExists) || Boolean.FALSE.equals(receiverExists)) {
-            throw new IllegalArgumentException("Payment failed: Sender or Receiver account does not exist.");
+        AccountDTO senderAccount = findAccountByName(allAccounts, payment.getSender());
+        if (senderAccount == null) {
+            throw new IllegalArgumentException("Sender account does not exist: " + payment.getSender());
         }
 
-        accountServiceClient.updateBalances(payment);
+        AccountDTO receiverAccount = findAccountByName(allAccounts, payment.getReceiver());
+        if (receiverAccount == null) {
+            throw new IllegalArgumentException("Receiver account does not exist: " + payment.getReceiver());
+        }
+
+        if (senderAccount.getBalance() < payment.getAmount()) {
+            throw new IllegalArgumentException("Insufficient funds in account: " + payment.getSender());
+        }
+
+        senderAccount.setBalance(senderAccount.getBalance() - payment.getAmount());
+        receiverAccount.setBalance(receiverAccount.getBalance() + payment.getAmount());
+
+        accountServiceClient.updateAccount(senderAccount);
+        accountServiceClient.updateAccount(receiverAccount);
 
         return paymentRepository.save(payment);
+    }
+
+    private AccountDTO findAccountByName(List<AccountDTO> accounts, String accountName) {
+        return accounts.stream()
+                .filter(acc -> accountName.equals(acc.getAccountName()))
+                .findFirst()
+                .orElse(null);
     }
 
     public Payment update(Payment payment) {
